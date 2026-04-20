@@ -20,7 +20,7 @@ const generateContent = async (systemInstruction, userPrompt) => {
     console.log('Initializing GoogleGenerativeAI with key...');
     const genAI = new GoogleGenerativeAI(key);
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
+      model: "gemini-2.0-flash",
       systemInstruction: systemInstruction
     });
 
@@ -141,7 +141,7 @@ Make explanations detailed enough to be useful for studying.`
 
       const genAI = new GoogleGenerativeAI(key);
       const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash",
+        model: "gemini-2.0-flash",
         systemInstruction: `You are a knowledgeable study assistant like ChatGPT, having a conversation about a specific topic. You:
 - Understand the context from the original content provided
 - Answer follow-up questions clearly and comprehensively
