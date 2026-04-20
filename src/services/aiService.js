@@ -20,7 +20,7 @@ const generateContent = async (systemInstruction, userPrompt) => {
     console.log('Initializing GoogleGenerativeAI with key...');
     const genAI = new GoogleGenerativeAI(key);
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash",
+      model: "gemini-1.5-flash",
       systemInstruction: systemInstruction
     });
 
@@ -30,14 +30,17 @@ const generateContent = async (systemInstruction, userPrompt) => {
     return result.response.text();
   } catch (error) {
     console.error('Full error object:', error);
-    console.error('Error message:', error.message);
-    console.error('Error status:', error.status);
     
-    // If API key is invalid or missing, rethrow as Missing Key
-    if (error.message.includes('API key') || error.message.includes('401') || error.message.includes('Unauthorized') || error.message.includes('INVALID_ARGUMENT')) {
+    // Check for Quota or Invalid Key errors specifically
+    if (error.message?.includes('API key') || error.message?.includes('401') || error.message?.includes('Unauthorized')) {
       throw new Error("Missing Key");
     }
-    throw error;
+    
+    if (error.message?.includes('Quota') || error.message?.includes('429')) {
+      throw new Error("Google AI Free Tier Quota Exceeded. Please try again later or check your Google Cloud Console.");
+    }
+    
+    throw new Error("Failed to connect to Gemini AI. " + (error.message || "Unknown error"));
   }
 };
 
@@ -97,7 +100,7 @@ export const studyAI = {
 
       const genAI = new GoogleGenerativeAI(key);
       const model = genAI.getGenerativeModel({ 
-        model: "gemini-2.0-flash",
+        model: "gemini-1.5-flash",
         systemInstruction: `You are an expert study assistant. The user is asking follow-up questions about the following topic and generated content:\n\nTopic: ${contextData.topic}\n\nOriginal Content: ${contextData.result}`
       });
 
@@ -116,7 +119,10 @@ export const studyAI = {
         return `*Demo Response:* Thank you for your question about ${contextData.topic}. Here is some additional information that might help!\n\nTo enable full AI chat functionality, please configure your Gemini API key in your Vercel project settings.`;
       }
       console.error('AI Chat Error:', error);
-      throw error;
+      if (error.message?.includes('Quota') || error.message?.includes('429')) {
+        throw new Error("Google AI Free Tier Quota Exceeded. Please try again later.");
+      }
+      throw new Error("Failed to send message: " + (error.message || "Unknown error"));
     }
   }
 };
