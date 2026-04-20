@@ -77,17 +77,17 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={value}>
       {loading ? (
-        <div className="min-h-screen bg-[#0a0b10] flex flex-col items-center justify-center gap-6">
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-6">
           <div className="relative">
-            <div className="w-20 h-20 rounded-2xl border-2 border-indigo-500/20 border-t-indigo-500 animate-spin" />
-            <div className="absolute inset-0 bg-indigo-500/20 blur-2xl animate-pulse rounded-full" />
+            <div className="w-20 h-20 rounded-xl border-2 border-slate-300 border-t-zinc-400 animate-spin" />
+            <div className="absolute inset-0 bg-slate-100 hidden animate-pulse rounded-full" />
           </div>
           <div className="flex flex-col items-center gap-2">
-            <h2 className="text-white font-black uppercase tracking-[0.3em] text-xs">Initializing</h2>
+            <h2 className="text-slate-900 font-bold uppercase tracking-[0.3em] text-sm">Initializing</h2>
             <div className="flex gap-1.5">
-              <div className="w-1 h-1 bg-indigo-500 rounded-full animate-bounce" />
-              <div className="w-1 h-1 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.2s]" />
-              <div className="w-1 h-1 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.4s]" />
+              <div className="w-1 h-1 bg-blue-600 rounded-full animate-bounce" />
+              <div className="w-1 h-1 bg-blue-600 rounded-full animate-bounce [animation-delay:0.2s]" />
+              <div className="w-1 h-1 bg-blue-600 rounded-full animate-bounce [animation-delay:0.4s]" />
             </div>
           </div>
         </div>

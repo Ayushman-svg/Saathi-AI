@@ -13,7 +13,7 @@ const Revision = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   // Merge revisionSchedules with Tasks that are marked as 'Revision'
-  const mergedRevisions = [
+  const mergedRevisions = React.useMemo(() => [
     ...revisionSchedules.map(r => ({ ...r, type: 'schedule' })),
     ...tasks.filter(t => t.status === 'Revision').map(t => {
         const subject = subjects.find(s => s.id === t.subjectId);
@@ -21,15 +21,24 @@ const Revision = () => {
             id: t.id,
             topicName: t.title,
             subjectName: subject ? subject.name : 'Unknown',
-            date: t.deadline || t.createdAt,
+            date: t.deadline || t.createdAt || new Date().toISOString(),
             status: 'Pending',
             type: 'task'
         };
     })
-  ];
+  ], [revisionSchedules, tasks, subjects]);
 
   const getRevisionForDate = (date) => {
-    return mergedRevisions.filter(r => isSameDay(parseISO(r.date), date));
+    if (!date) return [];
+    return mergedRevisions.filter(r => {
+        if (!r.date) return false;
+        try {
+            return isSameDay(parseISO(r.date), date);
+        } catch (e) {
+            console.error("Invalid date in revision:", r.date);
+            return false;
+        }
+    });
   };
 
   const handleComplete = (rev) => {
@@ -46,27 +55,27 @@ const Revision = () => {
   const pendingOverall = mergedRevisions.filter(r => r.status === 'Pending').length;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 pb-24">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-1">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 pb-24">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-1 pt-2">
         <div className="flex items-center gap-4">
-           <h3 className="text-2xl font-black text-white tracking-tighter text-glow uppercase">PLANNER</h3>
-           <div className="h-4 w-px bg-white/10 hidden md:block" />
-           <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest hidden md:block leading-none mt-1">Schedule Revisions</p>
+           <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Revision Planner</h3>
+           <div className="h-4 w-px bg-slate-200 hidden md:block" />
+           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden md:block leading-none mt-1 italic">Optimize Recall</p>
         </div>
-        <div className="glass-card px-4 py-2 flex items-center gap-3 hover:border-white/20 transition-all border-white/5 bg-slate-900/40 relative overflow-hidden group">
-            <div className="flex flex-col items-end relative z-10">
-                <span className="text-slate-500 text-[8px] font-black uppercase tracking-widest leading-none mb-0.5">Pending</span>
-                <span className="text-lg font-black text-indigo-400 leading-none">{pendingOverall}</span>
+        <div className="bg-white border border-slate-200 rounded-xl px-5 py-3 flex items-center gap-4 shadow-sm">
+            <div className="flex flex-col items-end">
+                <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest leading-none mb-1">Queue Status</span>
+                <span className="text-lg font-bold text-slate-900 leading-none">{pendingOverall} Pending</span>
             </div>
-            <div className="p-1.5 bg-indigo-500/10 rounded-lg border border-indigo-500/20 text-indigo-400 relative z-10">
-                <BrainCircuit className="w-4 h-4" />
+            <div className="p-2.5 bg-blue-50 rounded-lg border border-blue-100 text-blue-600">
+                <BrainCircuit className="w-5 h-5" />
             </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-12 xl:col-span-5 space-y-4">
-              <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="glass-card p-4 border-white/5 bg-slate-900/40 relative group overflow-hidden h-fit">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-12 xl:col-span-5">
+              <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="card-premium p-6 h-fit sticky top-8">
                   <Calendar 
                     onChange={setSelectedDate} 
                     value={selectedDate}
@@ -75,54 +84,47 @@ const Revision = () => {
                     }
                   />
                   
-                  <div className="mt-6 pt-4 border-t border-white/5 flex flex-col gap-4">
-                      <div className="flex flex-col gap-4">
-                          <div className="flex items-center gap-3">
-                             <div className="w-3 h-3 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
-                             <span className="font-black text-[11px] text-slate-400 uppercase tracking-widest">Has revisions</span>
-                          </div>
+                  <div className="mt-8 pt-6 border-t border-slate-100 space-y-6">
+                      <div className="flex items-center gap-3">
+                         <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />
+                         <span className="font-bold text-xs text-slate-500 uppercase tracking-widest">Scheduled Sessions</span>
                       </div>
-                      <div className="space-y-1">
-                         <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Sync Status</p>
-                         <div className="flex items-center gap-3">
-                            <div className="h-1 flex-1 bg-white/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-indigo-500/30 w-full" />
+                      <div className="space-y-2">
+                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Sync status</p>
+                         <div className="flex items-center gap-4">
+                            <div className="h-1.5 flex-1 bg-slate-100 rounded-full overflow-hidden">
+                                <div className="h-full bg-blue-600 w-[95%]" />
                             </div>
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Up to date</span>
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest shrink-0">Optimized</span>
                          </div>
                       </div>
-                  </div>
-                  <div className="absolute -bottom-10 -left-10 opacity-5 pointer-events-none group-hover:rotate-12 group-hover:scale-125 transition-all duration-1000">
-                    <Activity className="w-64 h-64" />
                   </div>
               </motion.div>
           </div>
 
           <div className="lg:col-span-12 xl:col-span-7 space-y-6">
-              <div className="flex items-center justify-between border-b border-white/5 pb-4 relative group">
-                <div className="flex items-center gap-3">
-                    <Target className="w-4 h-4 text-indigo-500" />
+              <div className="flex items-center justify-between border-b border-slate-200 pb-6 relative group">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-white border border-slate-200 rounded-xl shadow-sm text-slate-600">
+                        <Target className="w-5 h-5" />
+                    </div>
                     <div>
-                        <h4 className="text-base font-black text-white uppercase tracking-tight">Revisions</h4>
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{format(selectedDate, 'MMM dd, yyyy')}</p>
+                        <h4 className="text-xl font-bold text-slate-900 tracking-tight">Active Revisions</h4>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">{format(selectedDate, 'EEEE, MMMM dd')}</p>
                     </div>
                 </div>
-                <div className="bg-slate-950 border border-white/5 px-4 py-1.5 rounded-xl flex items-center gap-2">
-                    <span className="text-indigo-400 text-[8px] font-black uppercase tracking-widest leading-none bg-indigo-500/10 px-2 py-1 rounded-lg border border-indigo-500/20">{selectedRevisions.length} Found</span>
+                <div className="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider shadow-sm">
+                    {selectedRevisions.length} Tasks
                 </div>
               </div>
 
-              <div className="min-h-[400px]">
+              <div className="min-h-[500px]">
                 <RevisionList 
                     revisions={selectedRevisions} 
                     onComplete={handleComplete} 
                 />
               </div>
           </div>
-      </div>
-
-      <div className="absolute bottom-0 left-0 p-20 opacity-5 pointer-events-none select-none -ml-40 -mb-20 overflow-hidden">
-         <Layers className="w-[800px] h-[800px] -rotate-12 blur-3xl text-indigo-500" />
       </div>
     </motion.div>
   );

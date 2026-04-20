@@ -18,14 +18,14 @@ const Dashboard = () => {
   const { tasks, updateTask, deleteTask } = useTasks({ tab: 'All' }, 'deadline');
 
   const stats = [
-    { label: 'Active', value: totalTasks, icon: Book, color: 'text-blue-400', bg: 'bg-blue-400/10', border: 'border-blue-400/20' },
-    { label: 'Pending', value: pendingTasks, icon: Clock, color: 'text-amber-400', bg: 'bg-amber-400/10', border: 'border-amber-400/20' },
-    { label: 'Completed', value: completedTasks, icon: CheckCircle, color: 'text-green-400', bg: 'bg-green-400/10', border: 'border-green-400/20' },
+    { label: 'Active', value: totalTasks, icon: Book, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+    { label: 'Pending', value: pendingTasks, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+    { label: 'Completed', value: completedTasks, icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
   ];
 
   const container = {
     hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+    show: { opacity: 1, transition: { staggerChildren: 0.05 } }
   };
 
   const item = {
@@ -34,38 +34,35 @@ const Dashboard = () => {
   };
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 pb-10">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-1">
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-8 pb-10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-1 pt-2">
           <div className="space-y-1">
-            <h3 className="text-xl font-black text-white tracking-tighter text-glow uppercase">OPERATIONS CENTER</h3>
-            <div className="flex items-center gap-2 text-slate-500 font-bold uppercase tracking-widest text-[8px]">
-                <Activity className="w-2.5 h-2.5 text-indigo-500" />
-                <span>TASK CONTROL UNIT</span>
+            <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Overview</h3>
+            <div className="flex items-center gap-2 text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
+                <Activity className="w-3 h-3 text-blue-500" />
+                <span>Productivity Stats</span>
             </div>
           </div>
           <button 
             onClick={() => navigate('/tasks')}
-            className="px-4 py-2 bg-white/5 border border-white/5 hover:border-white/20 text-white rounded-lg text-[9px] font-black tracking-widest uppercase transition-all flex items-center gap-2"
+            className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold tracking-tight transition-all flex items-center gap-2 shadow-sm active:scale-95"
           >
-            <Plus className="w-3 h-3" /> Add Task
+            <Plus className="w-4 h-4" /> Add Task
           </button>
       </div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {stats.map((stat, idx) => (
-          <motion.div key={idx} variants={item} className={`glass-card p-6 group hover:border-white/20 transition-all border-white/5 bg-slate-900/40 relative overflow-hidden`}>
-            <div className="flex items-center justify-between relative z-10">
+          <motion.div key={idx} variants={item} className={`bg-white p-6 border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 relative group`}>
+            <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{stat.label}</p>
-                <h4 className="text-4xl font-black text-white tracking-tighter text-glow">{stat.value}</h4>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{stat.label}</p>
+                <h4 className="text-3xl font-bold text-slate-900 tracking-tight">{stat.value}</h4>
               </div>
-              <div className={`p-4 rounded-2xl ${stat.bg} ${stat.color} border ${stat.border} group-hover:scale-110 transition-transform`}>
+              <div className={`p-4 rounded-xl ${stat.bg} ${stat.color} border ${stat.border}`}>
                 <stat.icon className="w-6 h-6" />
               </div>
-            </div>
-            <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-                <stat.icon className="w-24 h-24 -mr-8 -mt-8" />
             </div>
           </motion.div>
         ))}
@@ -73,15 +70,15 @@ const Dashboard = () => {
 
       {/* Task List Section */}
       <div className="space-y-6">
-          <div className="flex items-center gap-4 border-b border-white/5 pb-6">
-              <div className="p-3 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 text-indigo-400">
+          <div className="flex items-center gap-4 border-b border-slate-200 pb-6">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-600">
                   <ListTodo className="w-6 h-6" />
               </div>
               <div>
-                  <h4 className="text-xl font-black text-white uppercase tracking-tight">Active Task Queue</h4>
+                  <h4 className="text-xl font-bold text-slate-900 tracking-tight">Active Task Queue</h4>
                   <div className="flex items-center gap-2 mt-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-                      <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Live Status: System Optimized</p>
+                      <div className="w-2 h-2 rounded-full bg-green-500" />
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider leading-none">System Status: Optimized</p>
                   </div>
               </div>
           </div>
@@ -101,16 +98,16 @@ const Dashboard = () => {
              </AnimatePresence>
              
              {tasks.length === 0 && (
-              <div className="py-20 flex flex-col items-center justify-center opacity-20 gap-4 border-dashed border-2 border-white/5 rounded-2xl">
-                <Search className="w-10 h-10 text-slate-500" />
-                <p className="text-[10px] font-black uppercase tracking-widest">No active tasks in queue</p>
+              <div className="py-20 flex flex-col items-center justify-center opacity-20 gap-4 border-dashed border-2 border-slate-200 rounded-xl">
+                <Search className="w-10 h-10 text-slate-600" />
+                <p className="text-sm font-bold uppercase tracking-wider">No active tasks in queue</p>
               </div>
             )}
 
             {tasks.length > 10 && (
                 <button 
                     onClick={() => navigate('/tasks')}
-                    className="w-full py-3 text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 hover:text-white transition-all border border-dashed border-white/5 rounded-xl"
+                    className="w-full py-3 text-sm font-bold uppercase tracking-[0.2em] text-slate-600 hover:text-slate-900 transition-all border border-dashed border-slate-200 rounded-xl"
                 >
                     View All {tasks.length} Tasks
                 </button>

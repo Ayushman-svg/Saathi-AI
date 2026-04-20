@@ -6,11 +6,11 @@ import {
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="glass-card p-4 border-indigo-500/20 bg-slate-900/90 shadow-[0_0_30px_rgba(99,102,241,0.2)] backdrop-blur-xl">
-        <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">{label}</p>
+      <div className="glass-card p-4 border-slate-300 bg-white shadow-sm">
+        <p className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-1">{label}</p>
         <div className="flex items-end gap-1.5">
-          <span className="text-2xl font-black text-white leading-none tracking-tighter">{payload[0].value}%</span>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">Completed</span>
+          <span className="text-2xl font-bold text-slate-900 leading-none tracking-tight">{payload[0].value}%</span>
+          <span className="text-sm font-bold text-slate-600 uppercase tracking-wider mb-0.5">Completed</span>
         </div>
       </div>
     );
@@ -24,7 +24,7 @@ const ProgressChart = ({ data, height = 340 }) => {
   return (
     <div style={{ height: `${height}px` }} className="w-full relative group/chart">
       {/* Background Glow */}
-      <div className="absolute inset-0 bg-linear-to-t from-indigo-500/5 to-transparent opacity-0 group-hover/chart:opacity-100 transition-opacity duration-1000 -z-10 blur-3xl" />
+      <div className="absolute inset-0 bg-linear-to-t from-zinc-400/5 to-transparent opacity-0 group-hover/chart:opacity-100 transition-opacity duration-1000 -z-10 hidden" />
       
       <ResponsiveContainer width="100%" height="100%">
         <BarChart 
