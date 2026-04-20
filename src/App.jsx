@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 console.log("STUDY AI APP LOADED - VERSION 2.0 MAX MINIMIZED");
-import { BrowserRouter as Router, Routes, Route, Navigate, NavLink, useLocation, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, NavLink, useLocation, Outlet, Link } from 'react-router-dom';
 import { 
   LayoutDashboard, BookOpen, CheckSquare, Calendar, Brain, User,
   Bell, Activity, Cpu, Layers, Menu, X, LogOut
@@ -36,8 +36,7 @@ const Navigation = ({ isOpen, onClose }) => {
     { to: '/subjects', label: 'Subjects', icon: BookOpen },
     { to: '/tasks', label: 'Tasks', icon: CheckSquare },
     { to: '/revision', label: 'Revision', icon: Calendar },
-    { to: '/ai-tools', label: 'AI Tools', icon: Brain },
-    { to: '/profile', label: 'Profile', icon: User },
+    { to: '/ai-tools', label: 'AI Tools', icon: Brain }
   ];
 
   return (
@@ -87,19 +86,21 @@ const Navigation = ({ isOpen, onClose }) => {
 };
 
 const Header = () => {
-  const { logout, currentUser } = useAuth();
+  const { currentUser } = useAuth();
   return (
     <header className="px-4 py-1.5 border-b border-white/5 bg-slate-950/20 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between">
       <div className="flex items-center gap-3">
           {/* Status badge removed per user request */}
       </div>
-      <div className="flex items-center gap-2">
-          <div className="hidden sm:block text-right">
-             <div className="text-xs font-black text-white leading-none uppercase tracking-tight">{currentUser?.displayName || currentUser?.email?.split('@')[0]}</div>
-          </div>
-          <button onClick={logout} className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-red-400 transition-all ml-1" title="Logout">
-              <LogOut className="w-3.5 h-3.5" />
-          </button>
+      <div className="flex items-center gap-3">
+          <Link to="/profile" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer group">
+             <div className="hidden sm:block text-right">
+                <div className="text-xs font-black text-white leading-none uppercase tracking-tight group-hover:text-indigo-400 transition-colors">{currentUser?.displayName || currentUser?.email?.split('@')[0]}</div>
+             </div>
+             <div className="w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all shadow-[0_0_10px_rgba(99,102,241,0.2)]">
+                <User className="w-4 h-4" />
+             </div>
+          </Link>
       </div>
     </header>
   );

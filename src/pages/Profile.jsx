@@ -2,14 +2,14 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   User, Mail, Calendar, TrendingUp, Award, Rocket, 
-  Activity, BarChart3, BrainCircuit, Shield
+  Activity, BarChart3, BrainCircuit, Shield, LogOut
 } from 'lucide-react';
 import { useProgress } from '../hooks/useProgress';
 import { useAuth } from '../context/AuthContext';
 import WeeklyChart from '../components/WeeklyChart';
 
 const Profile = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, logout } = useAuth();
   const { 
     completionPercentage, weeklyProductivity, studyStreak 
   } = useProgress();
@@ -103,6 +103,16 @@ const Profile = () => {
                         <p className="text-xs font-bold text-white">April 2026</p>
                     </div>
                 </div>
+            </div>
+
+            <div className="pt-6 mt-6 border-t border-white/5">
+                <button 
+                    onClick={logout} 
+                    className="w-full flex items-center justify-center gap-3 p-3.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl font-black uppercase tracking-[0.2em] text-[10px] transition-all group"
+                >
+                    <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
+                    Sign Out
+                </button>
             </div>
         </motion.div>
 
