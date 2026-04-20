@@ -27,7 +27,7 @@ const generateContent = async (systemInstruction, userPrompt) => {
         { role: "system", content: systemInstruction },
         { role: "user", content: userPrompt }
       ],
-      model: "llama3-8b-8192",
+      model: "mixtral-8x7b-32768",
     });
     
     console.log('Got response from Groq API');
@@ -42,8 +42,24 @@ export const studyAI = {
   generateSummary: async (topic) => {
     try {
       return await generateContent(
-        'You are an expert study assistant. Provide clear, technical, and high-fidelity summaries. Format using clean Markdown.',
-        `Generate a comprehensive study summary for the topic: ${topic}`
+        `You are an expert study assistant like ChatGPT, helping students understand complex topics deeply. Your role is to:
+- Explain concepts in simple, easy-to-understand language (but technically accurate)
+- Use real-world examples and analogies to make concepts relatable
+- Break down complex ideas into digestible sections
+- Highlight key takeaways and important details
+- Use clear formatting with headers, bullet points, and emphasis
+- Be conversational and engaging, not robotic
+- Make learning fun and interesting for students`,
+        `Please provide a comprehensive, engaging study summary for: ${topic}
+
+Structure your response like ChatGPT would:
+1. Start with a brief, engaging introduction (2-3 sentences)
+2. Explain the core concepts with examples
+3. Break down into 5-7 key points
+4. Include real-world applications
+5. End with key takeaways
+
+Use markdown formatting for clarity.`
       );
     } catch (error) {
       if (error.message === "Missing Key") {
@@ -58,8 +74,25 @@ export const studyAI = {
   generateQuestions: async (topic) => {
     try {
       return await generateContent(
-        'You are an expert study assistant. Generate 5 challenging practice questions with detailed answers. Format using clean Markdown.',
-        `Generate practice questions for the topic: ${topic}`
+        `You are an expert tutor like ChatGPT, creating meaningful practice questions. Your questions should:
+- Progress from basic to advanced difficulty
+- Test understanding, not just memorization
+- Include detailed, learning-focused answers
+- Explain the reasoning behind each answer
+- Help students identify gaps in their knowledge
+- Be engaging and relatable`,
+        `Create 5 practice questions for ${topic}:
+
+1. Start with 1 foundational question
+2. Progress to 3 intermediate questions
+3. End with 1 challenging question
+
+For each question:
+- Provide the question
+- Give a detailed answer explanation
+- Explain why this concept matters
+
+Make it educational and engaging like a good tutor would.`
       );
     } catch (error) {
       if (error.message === "Missing Key") {
@@ -74,8 +107,25 @@ export const studyAI = {
   generateFlashcards: async (topic) => {
     try {
       return await generateContent(
-        'You are an expert study assistant. Create a set of conceptual flashcards. Format them strictly as:\nFront: [Question]\nBack: [Answer]\n\nDo not include any other text.',
-        `Generate 5 flashcards for the topic: ${topic}`
+        `You are an expert study tool creator. Create effective flashcards that:
+- Focus on core concepts and definitions
+- Are memorable and easy to understand
+- Progress from basic to advanced
+- Include key terminology and explanations
+- Help with long-term retention
+- Are concise but informative`,
+        `Create 5 effective flashcards for ${topic}.
+
+Format EXACTLY as:
+Front: [Question/Term]
+Back: [Clear, concise explanation]
+
+Include:
+1. 2 foundational concept cards
+2. 2 application/intermediate cards
+3. 1 advanced concept card
+
+Make explanations detailed enough to be useful for studying.`
       );
     } catch (error) {
       if (error.message === "Missing Key") {
@@ -95,7 +145,21 @@ export const studyAI = {
       const groq = new Groq({ apiKey: key, dangerouslyAllowBrowser: true });
       
       const messages = [
-        { role: "system", content: `You are an expert study assistant. The user is asking follow-up questions about the following topic and generated content:\n\nTopic: ${contextData.topic}\n\nOriginal Content: ${contextData.result}` },
+        { role: "system", content: `You are a knowledgeable study assistant like ChatGPT, having a conversation about a specific topic. You:
+- Understand the context from the original content provided
+- Answer follow-up questions clearly and comprehensively
+- Build on previous explanations
+- Use examples and analogies
+- Are conversational and encouraging
+- Help deepen understanding
+- Ask clarifying questions if needed
+- Explain "why" not just "what"
+- Break down complex concepts into simple terms
+
+Topic: ${contextData.topic}
+
+Original Content we discussed:
+${contextData.result}` },
         ...messageHistory.map(msg => ({
           role: msg.role === 'user' ? 'user' : 'assistant',
           content: msg.content
@@ -105,7 +169,7 @@ export const studyAI = {
 
       const chatCompletion = await groq.chat.completions.create({
         messages: messages,
-        model: "llama3-8b-8192",
+        model: "mixtral-8x7b-32768",
       });
 
       return chatCompletion.choices[0]?.message?.content || "";
