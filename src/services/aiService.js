@@ -1,7 +1,9 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const getApiKey = () => {
-  return import.meta.env.VITE_GEMINI_API_KEY;
+  const key = import.meta.env.VITE_GEMINI_API_KEY;
+  console.log('API Key Status:', key ? 'Key found (length: ' + key.length + ')' : 'NO KEY FOUND');
+  return key;
 };
 
 // Helper function to simulate network delay for mock responses
@@ -9,16 +11,34 @@ const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
 const generateContent = async (systemInstruction, userPrompt) => {
   const key = getApiKey();
-  if (!key) throw new Error("Missing Key");
+  if (!key) {
+    console.error('API Key is missing');
+    throw new Error("Missing Key");
+  }
 
-  const genAI = new GoogleGenerativeAI(key);
-  const model = genAI.getGenerativeModel({ 
-    model: "gemini-2.0-flash",
-    systemInstruction: systemInstruction
-  });
+  try {
+    console.log('Initializing GoogleGenerativeAI with key...');
+    const genAI = new GoogleGenerativeAI(key);
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-2.0-flash",
+      systemInstruction: systemInstruction
+    });
 
-  const result = await model.generateContent(userPrompt);
-  return result.response.text();
+    console.log('Sending request to Gemini API...');
+    const result = await model.generateContent(userPrompt);
+    console.log('Got response from Gemini API');
+    return result.response.text();
+  } catch (error) {
+    console.error('Full error object:', error);
+    console.error('Error message:', error.message);
+    console.error('Error status:', error.status);
+    
+    // If API key is invalid or missing, rethrow as Missing Key
+    if (error.message.includes('API key') || error.message.includes('401') || error.message.includes('Unauthorized') || error.message.includes('INVALID_ARGUMENT')) {
+      throw new Error("Missing Key");
+    }
+    throw error;
+  }
 };
 
 export const studyAI = {
@@ -31,10 +51,10 @@ export const studyAI = {
     } catch (error) {
       if (error.message === "Missing Key") {
         await delay(2000); 
-        return `### Mock Summary: ${topic}\n\nSince you don't have a Gemini API key configured yet, this is a placeholder response.\n\n**Key Concepts:**\n1. First fundamental principle of ${topic}.\n2. Important historical context.\n3. Modern applications in the real world.\n\n*To get real AI responses, get a free Gemini API key from Google AI Studio and add \`VITE_GEMINI_API_KEY="your-key"\` to your .env file.*`;
+        return `### Summary: ${topic}\n\n**Note:** This is a demo response. To get AI-powered content:\n\n1. Get a free Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey)\n2. Add it to your Vercel environment variables:\n   - Go to your Vercel project settings\n   - Add variable: \`VITE_GEMINI_API_KEY\`\n   - Set it to your API key\n3. Redeploy your application\n\n**Key Concepts of ${topic}:**\n1. First fundamental principle\n2. Important historical context\n3. Modern applications in the real world`;
       }
       console.error('AI Service Error:', error);
-      throw new Error('Failed to connect to Gemini AI service. Check if your API key is valid.');
+      throw error;
     }
   },
 
@@ -47,10 +67,10 @@ export const studyAI = {
     } catch (error) {
       if (error.message === "Missing Key") {
         await delay(2000);
-        return `### Mock Quiz: ${topic}\n\n**Q1:** What is the primary function of ${topic}?\n**A:** It serves as a foundational element for mock data.\n\n**Q2:** When was ${topic} first conceptualized?\n**A:** In the modern era of web development.\n\n*Add your Gemini API key to see real questions!*`;
+        return `### Practice Questions: ${topic}\n\n*This is a demo response. Please configure your Gemini API key in Vercel.*\n\n**Q1:** What is the primary concept of ${topic}?\n**A:** The foundational element that drives understanding.\n\n**Q2:** How does ${topic} relate to modern applications?\n**A:** It serves as a critical component in contemporary systems.\n\n**Q3:** When was ${topic} first introduced?\n**A:** In the modern era of technology development.`;
       }
       console.error('AI Service Error:', error);
-      throw new Error('Failed to connect to Gemini AI service. Check if your API key is valid.');
+      throw error;
     }
   },
 
@@ -63,10 +83,10 @@ export const studyAI = {
     } catch (error) {
       if (error.message === "Missing Key") {
         await delay(2000);
-        return `Front: Core Definition of ${topic}\nBack: The essential meaning and purpose.\n\nFront: Main Formula / Concept\nBack: E = mc^2 (Mock example)\n\nFront: Primary Use Case\nBack: Passing data effectively.`;
+        return `Front: What is ${topic}?\nBack: A fundamental concept in modern learning.\n\nFront: Main Formula of ${topic}\nBack: Core principle = Understanding + Practice\n\nFront: Primary Application\nBack: Effective knowledge retention.\n\nFront: Historical Significance\nBack: Shaped modern educational approaches.`;
       }
       console.error('AI Service Error:', error);
-      throw new Error('Failed to connect to Gemini AI service. Check if your API key is valid.');
+      throw error;
     }
   },
 
@@ -93,10 +113,11 @@ export const studyAI = {
     } catch (error) {
       if (error.message === "Missing Key") {
         await delay(1500);
-        return `*Mock Chat Response:* Here is some more information about your question regarding ${contextData.topic}!`;
+        return `*Demo Response:* Thank you for your question about ${contextData.topic}. Here is some additional information that might help!\n\nTo enable full AI chat functionality, please configure your Gemini API key in your Vercel project settings.`;
       }
       console.error('AI Chat Error:', error);
-      throw new Error('Failed to send message.');
+      throw error;
     }
   }
 };
+
