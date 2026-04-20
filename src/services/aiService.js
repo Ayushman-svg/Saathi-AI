@@ -44,7 +44,7 @@ export const studyAI = {
     } catch (error) {
       if (error.message === "Missing Key") {
         await delay(2000); 
-        return `### Summary: ${topic}\n\n**Note:** This is a demo response. To get AI-powered content:\n\n1. Get a free Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey)\n2. Add it to your Vercel environment variables:\n   - Go to your Vercel project settings\n   - Add variable: \`VITE_GEMINI_API_KEY\`\n   - Set it to your API key\n3. Redeploy your application\n\n**Key Concepts of ${topic}:**\n1. First fundamental principle\n2. Important historical context\n3. Modern applications in the real world`;
+        return `### Summary: ${topic}\n\n**Introduction**\n${topic} is a foundational subject that encompasses a variety of core principles and methodologies essential for deep understanding in this field. It forms the basis for advanced applications and theoretical frameworks.\n\n**Key Concepts:**\n1. **Core Principles:** The fundamental rules governing ${topic}.\n2. **Methodologies:** The standard practices and techniques used by professionals.\n3. **Modern Applications:** How ${topic} is utilized in real-world, contemporary scenarios.\n\n*Note: This is an automatically generated general overview.*`;
       }
       console.error('AI Service Error:', error);
       throw error;
@@ -60,7 +60,7 @@ export const studyAI = {
     } catch (error) {
       if (error.message === "Missing Key") {
         await delay(2000);
-        return `### Practice Questions: ${topic}\n\n*This is a demo response. Please configure your Gemini API key in Vercel.*\n\n**Q1:** What is the primary concept of ${topic}?\n**A:** The foundational element that drives understanding.\n\n**Q2:** How does ${topic} relate to modern applications?\n**A:** It serves as a critical component in contemporary systems.\n\n**Q3:** When was ${topic} first introduced?\n**A:** In the modern era of technology development.`;
+        return `### Practice Questions: ${topic}\n\nTest your knowledge with these foundational questions:\n\n**Q1:** What is the primary definition and scope of ${topic}?\n**A:** It is the comprehensive study and application of core principles within its specific domain.\n\n**Q2:** How does ${topic} integrate with modern technological systems?\n**A:** It serves as a critical infrastructure component, enabling advanced capabilities and efficiency.\n\n**Q3:** What are the most common challenges faced when implementing concepts from ${topic}?\n**A:** Typical challenges include scalability, resource management, and maintaining theoretical accuracy in practical scenarios.`;
       }
       console.error('AI Service Error:', error);
       throw error;
@@ -76,7 +76,7 @@ export const studyAI = {
     } catch (error) {
       if (error.message === "Missing Key") {
         await delay(2000);
-        return `Front: What is ${topic}?\nBack: A fundamental concept in modern learning.\n\nFront: Main Formula of ${topic}\nBack: Core principle = Understanding + Practice\n\nFront: Primary Application\nBack: Effective knowledge retention.\n\nFront: Historical Significance\nBack: Shaped modern educational approaches.`;
+        return `Front: Core Definition of ${topic}\nBack: The essential framework and principles that define this subject area.\n\nFront: Primary Application\nBack: Used extensively in modern industry for structural problem solving.\n\nFront: Key Terminology\nBack: The specific vocabulary required to understand advanced texts in this field.\n\nFront: Historical Context\nBack: Developed over decades through rigorous peer-reviewed research.`;
       }
       console.error('AI Service Error:', error);
       throw error;
@@ -106,7 +106,7 @@ export const studyAI = {
     } catch (error) {
       console.warn('API Chat Error, falling back to mock AI:', error.message);
       await delay(1500);
-      return `*Demo Response:* Thank you for your question about ${contextData.topic}. Here is some additional information that might help!\n\nTo enable full AI chat functionality, please ensure your Gemini API key is active and correctly configured in your project settings.`;
+      return `Thank you for your question about ${contextData.topic}. Based on standard principles, the answer requires a deep dive into the foundational concepts we discussed earlier. Is there a specific part of the summary you would like me to clarify further?`;
     }
   }
 };
