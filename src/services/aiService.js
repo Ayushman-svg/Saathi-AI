@@ -27,7 +27,7 @@ const generateContent = async (systemInstruction, userPrompt) => {
         { role: "system", content: systemInstruction },
         { role: "user", content: userPrompt }
       ],
-      model: "mixtral-8x7b-32768",
+      model: "llama-3.1-70b-versatile",
     });
     
     console.log('Got response from Groq API');
@@ -169,7 +169,7 @@ ${contextData.result}` },
 
       const chatCompletion = await groq.chat.completions.create({
         messages: messages,
-        model: "mixtral-8x7b-32768",
+        model: "llama-3.1-70b-versatile",
       });
 
       return chatCompletion.choices[0]?.message?.content || "";
