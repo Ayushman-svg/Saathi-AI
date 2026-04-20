@@ -27,12 +27,15 @@ const generateContent = async (systemInstruction, userPrompt) => {
         { role: "system", content: systemInstruction },
         { role: "user", content: userPrompt }
       ],
-      model: "llama-3.1-70b-versatile",
+      model: "llama-3.3-70b-versatile",
     });
     
     console.log('Got response from Groq API');
     return chatCompletion.choices[0]?.message?.content || "";
   } catch (error) {
+    console.error('Full API Error:', error);
+    console.error('Error message:', error.message);
+    console.error('Error status:', error.status);
     console.warn('API Error, falling back to mock AI:', error.message);
     throw new Error("Missing Key");
   }
@@ -169,11 +172,14 @@ ${contextData.result}` },
 
       const chatCompletion = await groq.chat.completions.create({
         messages: messages,
-        model: "llama-3.1-70b-versatile",
+        model: "llama-3.3-70b-versatile",
       });
 
       return chatCompletion.choices[0]?.message?.content || "";
     } catch (error) {
+      console.error('Full Chat API Error:', error);
+      console.error('Error message:', error.message);
+      console.error('Error status:', error.status);
       console.warn('API Chat Error, falling back to mock AI:', error.message);
       await delay(1500);
       return `Thank you for your question about ${contextData.topic}. Based on standard principles, the answer requires a deep dive into the foundational concepts we discussed earlier. Is there a specific part of the summary you would like me to clarify further?`;
