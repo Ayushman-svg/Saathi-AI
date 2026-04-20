@@ -5,11 +5,10 @@ import { CheckCircle2, History, BrainCircuit, Target, Ghost } from 'lucide-react
 const RevisionList = ({ revisions, onComplete }) => {
   return (
     <div className="grid grid-cols-1 gap-3">
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence>
         {revisions.map(revision => (
           <motion.div 
               key={revision.id}
-              layout
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}

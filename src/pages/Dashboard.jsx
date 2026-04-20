@@ -84,7 +84,7 @@ const Dashboard = () => {
           </div>
 
           <div className="space-y-3">
-             <AnimatePresence mode="popLayout">
+             <AnimatePresence>
                 {tasks.slice(0, 10).map(task => (
                     <TaskCard 
                         key={task.id} 

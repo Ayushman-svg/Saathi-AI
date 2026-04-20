@@ -72,11 +72,11 @@ const Tasks = () => {
 
   useEffect(() => {
     if (!selectedSubjectId) {
-      setValue('topic', '');
+      if (selectedTopic !== '') setValue('topic', '');
       return;
     }
     const hasTopic = selectedSubjectTopics.some((topic) => topic.name === selectedTopic);
-    if (!hasTopic) setValue('topic', '');
+    if (!hasTopic && selectedTopic !== '') setValue('topic', '');
   }, [selectedSubjectId, selectedSubjectTopics, selectedTopic, setValue]);
 
   const onSubmit = (data) => {
@@ -230,7 +230,7 @@ const Tasks = () => {
               </div>
 
               <div className="space-y-6">
-                 <AnimatePresence mode="popLayout">
+                 <AnimatePresence>
                     {tasks.map(task => (
                         <TaskCard 
                             key={task.id} 
