@@ -29,18 +29,8 @@ const generateContent = async (systemInstruction, userPrompt) => {
     console.log('Got response from Gemini API');
     return result.response.text();
   } catch (error) {
-    console.error('Full error object:', error);
-    
-    // Check for Quota or Invalid Key errors specifically
-    if (error.message?.includes('API key') || error.message?.includes('401') || error.message?.includes('Unauthorized')) {
-      throw new Error("Missing Key");
-    }
-    
-    if (error.message?.includes('Quota') || error.message?.includes('429')) {
-      throw new Error("Google AI Free Tier Quota Exceeded. Please try again later or check your Google Cloud Console.");
-    }
-    
-    throw new Error("Failed to connect to Gemini AI: " + (error.message || "Unknown error"));
+    console.warn('API Error, falling back to mock AI:', error.message);
+    throw new Error("Missing Key");
   }
 };
 
@@ -114,15 +104,9 @@ export const studyAI = {
       const result = await chat.sendMessage(newMessage);
       return result.response.text();
     } catch (error) {
-      if (error.message === "Missing Key") {
-        await delay(1500);
-        return `*Demo Response:* Thank you for your question about ${contextData.topic}. Here is some additional information that might help!\n\nTo enable full AI chat functionality, please configure your Gemini API key in your Vercel project settings.`;
-      }
-      console.error('AI Chat Error:', error);
-      if (error.message?.includes('Quota') || error.message?.includes('429')) {
-        throw new Error("Google AI Free Tier Quota Exceeded. Please try again later.");
-      }
-      throw new Error("Failed to send message: " + (error.message || "Unknown error"));
+      console.warn('API Chat Error, falling back to mock AI:', error.message);
+      await delay(1500);
+      return `*Demo Response:* Thank you for your question about ${contextData.topic}. Here is some additional information that might help!\n\nTo enable full AI chat functionality, please ensure your Gemini API key is active and correctly configured in your project settings.`;
     }
   }
 };
