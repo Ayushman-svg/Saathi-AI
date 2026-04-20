@@ -13,7 +13,7 @@ const generateContent = async (systemInstruction, userPrompt) => {
 
   const genAI = new GoogleGenerativeAI(key);
   const model = genAI.getGenerativeModel({ 
-    model: "gemini-2.5-flash",
+    model: "gemini-2.0-flash",
     systemInstruction: systemInstruction
   });
 
@@ -77,7 +77,7 @@ export const studyAI = {
 
       const genAI = new GoogleGenerativeAI(key);
       const model = genAI.getGenerativeModel({ 
-        model: "gemini-2.5-flash",
+        model: "gemini-2.0-flash",
         systemInstruction: `You are an expert study assistant. The user is asking follow-up questions about the following topic and generated content:\n\nTopic: ${contextData.topic}\n\nOriginal Content: ${contextData.result}`
       });
 
