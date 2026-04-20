@@ -1,7 +1,8 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import Groq from 'groq-sdk';
 
 const getApiKey = () => {
-  const key = import.meta.env.VITE_GEMINI_API_KEY;
+  // Check for Groq key first, fallback to old key name just in case
+  const key = import.meta.env.VITE_GROQ_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
   console.log('API Key Status:', key ? 'Key found (length: ' + key.length + ')' : 'NO KEY FOUND');
   return key;
 };
@@ -17,17 +18,20 @@ const generateContent = async (systemInstruction, userPrompt) => {
   }
 
   try {
-    console.log('Initializing GoogleGenerativeAI with key...');
-    const genAI = new GoogleGenerativeAI(key);
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-pro",
-      systemInstruction: systemInstruction
-    });
+    console.log('Initializing Groq SDK with key...');
+    const groq = new Groq({ apiKey: key, dangerouslyAllowBrowser: true });
 
-    console.log('Sending request to Gemini API...');
-    const result = await model.generateContent(userPrompt);
-    console.log('Got response from Gemini API');
-    return result.response.text();
+    console.log('Sending request to Groq API...');
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        { role: "system", content: systemInstruction },
+        { role: "user", content: userPrompt }
+      ],
+      model: "llama3-8b-8192",
+    });
+    
+    console.log('Got response from Groq API');
+    return chatCompletion.choices[0]?.message?.content || "";
   } catch (error) {
     console.warn('API Error, falling back to mock AI:', error.message);
     throw new Error("Missing Key");
@@ -88,21 +92,23 @@ export const studyAI = {
       const key = getApiKey();
       if (!key) throw new Error("Missing Key");
 
-      const genAI = new GoogleGenerativeAI(key);
-      const model = genAI.getGenerativeModel({ 
-        model: "gemini-pro",
-        systemInstruction: `You are an expert study assistant. The user is asking follow-up questions about the following topic and generated content:\n\nTopic: ${contextData.topic}\n\nOriginal Content: ${contextData.result}`
+      const groq = new Groq({ apiKey: key, dangerouslyAllowBrowser: true });
+      
+      const messages = [
+        { role: "system", content: `You are an expert study assistant. The user is asking follow-up questions about the following topic and generated content:\n\nTopic: ${contextData.topic}\n\nOriginal Content: ${contextData.result}` },
+        ...messageHistory.map(msg => ({
+          role: msg.role === 'user' ? 'user' : 'assistant',
+          content: msg.content
+        })),
+        { role: "user", content: newMessage }
+      ];
+
+      const chatCompletion = await groq.chat.completions.create({
+        messages: messages,
+        model: "llama3-8b-8192",
       });
 
-      const chat = model.startChat({
-        history: messageHistory.map(msg => ({
-          role: msg.role === 'user' ? 'user' : 'model',
-          parts: [{ text: msg.content }],
-        }))
-      });
-
-      const result = await chat.sendMessage(newMessage);
-      return result.response.text();
+      return chatCompletion.choices[0]?.message?.content || "";
     } catch (error) {
       console.warn('API Chat Error, falling back to mock AI:', error.message);
       await delay(1500);
@@ -110,4 +116,3 @@ export const studyAI = {
     }
   }
 };
-
