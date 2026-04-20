@@ -20,7 +20,7 @@ const generateContent = async (systemInstruction, userPrompt) => {
     console.log('Initializing GoogleGenerativeAI with key...');
     const genAI = new GoogleGenerativeAI(key);
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
+      model: "gemini-pro",
       systemInstruction: systemInstruction
     });
 
@@ -40,7 +40,7 @@ const generateContent = async (systemInstruction, userPrompt) => {
       throw new Error("Google AI Free Tier Quota Exceeded. Please try again later or check your Google Cloud Console.");
     }
     
-    throw new Error("Failed to connect to Gemini AI. " + (error.message || "Unknown error"));
+    throw new Error("Failed to connect to Gemini AI: " + (error.message || "Unknown error"));
   }
 };
 
@@ -100,7 +100,7 @@ export const studyAI = {
 
       const genAI = new GoogleGenerativeAI(key);
       const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash",
+        model: "gemini-pro",
         systemInstruction: `You are an expert study assistant. The user is asking follow-up questions about the following topic and generated content:\n\nTopic: ${contextData.topic}\n\nOriginal Content: ${contextData.result}`
       });
 
