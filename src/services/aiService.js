@@ -1,8 +1,7 @@
-import Groq from 'groq-sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const getApiKey = () => {
-  // Check for Groq key first, fallback to old key name just in case
-  const key = import.meta.env.VITE_GROQ_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
+  const key = import.meta.env.VITE_GEMINI_API_KEY;
   console.log('API Key Status:', key ? 'Key found (length: ' + key.length + ')' : 'NO KEY FOUND');
   return key;
 };
@@ -18,24 +17,19 @@ const generateContent = async (systemInstruction, userPrompt) => {
   }
 
   try {
-    console.log('Initializing Groq SDK with key...');
-    const groq = new Groq({ apiKey: key, dangerouslyAllowBrowser: true });
-
-    console.log('Sending request to Groq API...');
-    const chatCompletion = await groq.chat.completions.create({
-      messages: [
-        { role: "system", content: systemInstruction },
-        { role: "user", content: userPrompt }
-      ],
-      model: "llama-3.3-70b-versatile",
+    console.log('Initializing GoogleGenerativeAI with key...');
+    const genAI = new GoogleGenerativeAI(key);
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      systemInstruction: systemInstruction
     });
-    
-    console.log('Got response from Groq API');
-    return chatCompletion.choices[0]?.message?.content || "";
+
+    console.log('Sending request to Gemini API...');
+    const result = await model.generateContent(userPrompt);
+    console.log('Got response from Gemini API');
+    return result.response.text();
   } catch (error) {
     console.error('Full API Error:', error);
-    console.error('Error message:', error.message);
-    console.error('Error status:', error.status);
     console.warn('API Error, falling back to mock AI:', error.message);
     throw new Error("Missing Key");
   }
@@ -145,10 +139,10 @@ Make explanations detailed enough to be useful for studying.`
       const key = getApiKey();
       if (!key) throw new Error("Missing Key");
 
-      const groq = new Groq({ apiKey: key, dangerouslyAllowBrowser: true });
-      
-      const messages = [
-        { role: "system", content: `You are a knowledgeable study assistant like ChatGPT, having a conversation about a specific topic. You:
+      const genAI = new GoogleGenerativeAI(key);
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash",
+        systemInstruction: `You are a knowledgeable study assistant like ChatGPT, having a conversation about a specific topic. You:
 - Understand the context from the original content provided
 - Answer follow-up questions clearly and comprehensively
 - Build on previous explanations
@@ -162,24 +156,20 @@ Make explanations detailed enough to be useful for studying.`
 Topic: ${contextData.topic}
 
 Original Content we discussed:
-${contextData.result}` },
-        ...messageHistory.map(msg => ({
-          role: msg.role === 'user' ? 'user' : 'assistant',
-          content: msg.content
-        })),
-        { role: "user", content: newMessage }
-      ];
-
-      const chatCompletion = await groq.chat.completions.create({
-        messages: messages,
-        model: "llama-3.3-70b-versatile",
+${contextData.result}`
       });
 
-      return chatCompletion.choices[0]?.message?.content || "";
+      const chat = model.startChat({
+        history: messageHistory.map(msg => ({
+          role: msg.role === 'user' ? 'user' : 'model',
+          parts: [{ text: msg.content }],
+        }))
+      });
+
+      const result = await chat.sendMessage(newMessage);
+      return result.response.text();
     } catch (error) {
       console.error('Full Chat API Error:', error);
-      console.error('Error message:', error.message);
-      console.error('Error status:', error.status);
       console.warn('API Chat Error, falling back to mock AI:', error.message);
       await delay(1500);
       return `Thank you for your question about ${contextData.topic}. Based on standard principles, the answer requires a deep dive into the foundational concepts we discussed earlier. Is there a specific part of the summary you would like me to clarify further?`;
