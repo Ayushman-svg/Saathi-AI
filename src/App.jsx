@@ -57,10 +57,8 @@ const Sidebar = ({ isOpen, onClose }) => {
 
       <nav className={`fixed md:sticky top-0 left-0 z-50 w-[160px] border-r border-slate-200 h-screen flex flex-col p-4 bg-white transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="flex flex-col items-center gap-1 mb-10 pt-4 group cursor-pointer">
-          <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-sm">
-            <Brain className="w-6 h-6" />
-          </div>
-          <div className="mt-3 text-center">
+          <img src="/logo.png" alt="Saathi Logo" className="w-14 h-14 object-contain" />
+          <div className="mt-2 text-center">
             <h1 className="text-sm font-bold text-slate-900 tracking-tight uppercase leading-none">Saathi</h1>
             <p className="text-[9px] font-bold text-slate-400 tracking-[0.1em] uppercase leading-none mt-1.5">Academic Intelligence</p>
           </div>
